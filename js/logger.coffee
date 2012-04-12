@@ -16,10 +16,9 @@ logger = {}
 #   or an array of log types (e.g., ['error', 'warn'] )
 #   or it can be set to 'all' or true (for EVERYTHING) 
 logger.options = {
-    log_level: 'error'
+    log_level: 'all'
     #log_level: 'info'
     #log_level: ['error', 'warn']
-    #log_level: 'all'
 }
 
 #----------------------------------------
@@ -84,7 +83,6 @@ logger.log = (type)->
         #We don't want the first argument to be undefined
         args.splice(0, 0, 'debug')
 
-    console.log(type)
     #Check to see if we can log
     if not logger.can_log(type)
         return false

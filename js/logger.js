@@ -4,7 +4,7 @@ var logger;
 logger = {};
 
 logger.options = {
-  log_level: 'error'
+  log_level: 'all'
 };
 
 logger.history = {};
@@ -34,7 +34,6 @@ logger.log = function(type) {
     type = 'debug';
     args.splice(0, 0, 'debug');
   }
-  console.log(type);
   if (!logger.can_log(type)) return false;
   args.push('Date: ' + new Date());
   log_history = logger.history;
