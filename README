@@ -1,11 +1,22 @@
 ### JSLogger
-This is a simple console.log replacement / extension.  There are multiple log levels, and you can easily add your own.  The included ones are logger.info, logger.warn, logger.error, and logger.debug.  logger.history contains all calls for each log type, and configurations (setting log level) can be controlled via logger.options
+This is a simple console.log replacement / extension.  There are multiple log levels, and you can easily add your own.  The included ones are logger.info, logger.warn, logger.error, and logger.debug. 
 
-Example call to log an info message
+```logger.history``` contains all calls for each log type
+
+```logger.options``` contains configurations (e.g., ```logger.options.log_level```)
+
+***
+
+###Example Call 
+The following will log an info message.  To log a different type, use warn, error, debug, or any custom ones you create.
+
 ```
 logger.info('Some message', {'extra': 'info'});
 ```
+
 You can also directly call logger.log and pass in the type ('info', 'warn', etc.)
+
 ```
 logger.log('info', 'Some message', {'extra': 'info'});
 ```
+
