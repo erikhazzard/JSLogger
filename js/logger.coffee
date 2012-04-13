@@ -4,9 +4,9 @@
         
     ======================================================================== '''
 #NOTE: We can access all the history of each logger type by calling
-#   logger.history (will show a dict of all log types and their 
+#   visually.logger.history (will show a dict of all log types and their 
 #   history)
-logger = {}
+visually.logger = {}
 
 #----------------------------------------
 #Options
@@ -15,10 +15,11 @@ logger = {}
 #   or a specific log type (e.g., 'error' or 'debug')
 #   or an array of log types (e.g., ['error', 'warn'] )
 #   or it can be set to 'all' or true (for EVERYTHING) 
-logger.options = {
+visually.logger.options = {
     log_level: 'all'
     #log_level: 'info'
     #log_level: ['error', 'warn']
+    #log_level: 'all'
 }
 
 #----------------------------------------
@@ -27,18 +28,18 @@ logger.options = {
 #The history will be updated when logger.log() is called
 #   the keys are the log type (e.g., 'warn') and the value
 #   is the arguments passed to the log function
-logger.history = {}
+visually.logger.history = {}
 
 #----------------------------------------
 #Log methods
 #----------------------------------------
-logger.can_log = (type)->
+visually.logger.can_log = (type)->
     '''This function takes in a type (e.g., 'warn') and checks to see if
-    it exists in the logger.options.log_level option
+    it exists in the visually.logger.options.log_level option
     '''
     return_value = false
     #Store local reference (saves time and is faster)
-    log_level = logger.options.log_level
+    log_level = visually.logger.options.log_level
 
     if log_level == 'all' or log_level == true
         #If they want everything, give it to them
@@ -63,11 +64,11 @@ logger.can_log = (type)->
 #----------------------------------------
 #Log() function
 #----------------------------------------
-logger.log = (type)->
+visually.logger.log = (type)->
     '''
         When using logger.log, you must pass in a type
         e.g.
-            logger.debug( arg1, arg2, etc. )
+            visually.logger.debug( arg1, arg2, etc. )
     '''
     #Because the first argument might not exist, we'll need to
     #   create a copy of arguments and make the type the first
@@ -84,14 +85,19 @@ logger.log = (type)->
         args.splice(0, 0, 'debug')
 
     #Check to see if we can log
-    if not logger.can_log(type)
+    if not visually.logger.can_log(type)
         return false
 
     #Add some meta info to the log call
-    args.push('Date: ' + new Date())
+    cur_date = new Date()
+    args.push({
+        'Date': cur_date
+        'Milliseconds': cur_date.getMilliseconds()
+        'Time': cur_date.getTime()
+    })
 
     #Keep track of all log messages
-    log_history = logger.history
+    log_history = visually.logger.history
     log_history[type] = log_history[type] || []
 
     #Add message to history
@@ -108,27 +114,32 @@ logger.log = (type)->
 
     return true
 
-#Specific logger types.  We could extend these to do more stuff later
+#Setup specific logger types.  We could extend these to do more stuff later
 #   We can also add any arbitrary log type we want either
-logger.debug = ()->
-    args = Array.prototype.slice.call(arguments)
-    args.splice(0, 0, 'debug')
-    return logger.log.apply(null,args)
+#To add a type, just add it to array here
+visually.logger.options.log_types = [
+    'debug', 'error', 'info', 'warn'
+]
 
-logger.error = ()->
-    args = Array.prototype.slice.call(arguments)
-    args.splice(0, 0, 'error')
-    return logger.log.apply(null,args)
-
-logger.info = ()->
-    args = Array.prototype.slice.call(arguments)
-    args.splice(0, 0, 'info')
-    return logger.log.apply(null,args)
-
-logger.warn = ()->
-    args = Array.prototype.slice.call(arguments)
-    args.splice(0, 0, 'warn')
-    return logger.log.apply(null,args)
+visually.logger.options.setup_log_types = ()->
+    '''This function will setup log types based on the ones available in
+    visually.logger.options.log_types.  It can be called whenever to 
+    dynamically add log types
+    '''
+    for log_type in visually.logger.options.log_types
+        #Wrap this in a closure
+        do (log_type) ->
+            #Create a logger[log_type] function for each different log type
+            visually.logger[log_type] = ()->
+                #Store all arguments
+                args = Array.prototype.slice.call(arguments)
+                #Add the log_type as the first argument
+                args.splice(0, 0, log_type)
+                #Call and return the log() function, passing in log_type
+                #   as the first parameter
+                return visually.logger.log.apply(null,args)
+#call it
+visually.logger.options.setup_log_types()
 
 ''' ========================================================================    
     Configure console.log
@@ -136,10 +147,10 @@ logger.warn = ()->
 #----------------------------------------
 #Configure window.console.log
 #----------------------------------------
-#Set the window.console.log function to log
-if window.console and logger.options
+#Set the window.console.log function to visually.log
+if window.console and visually.logger.options
     #If log_errors is false, don't log errors
-    if logger.options.log_level == 'none' or logger.options.log_level is null
+    if visually.logger.options.log_level == 'none' or visually.logger.options.log_level is null
         console.log = ()-> {}
 
 #If window.console does not exist, create an empty log function
@@ -150,5 +161,5 @@ if not window.console?
 
 #Catch and handle all general exceptions
 window.onerror = (msg, url, line)->
-    logger.error(msg, url, line)
+    visually.logger.error(msg, url, line)
     return false
