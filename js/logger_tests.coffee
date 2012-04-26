@@ -1,7 +1,7 @@
 ''' ========================================================================    
-    logger_tests.coffee
+    LOGGER_tests.coffee
 
-    Contains all the unit tests for the logger
+    Contains all the unit tests for the LOGGER
 
     Some common test functions
     ----------------------
@@ -25,19 +25,19 @@ $(document).ready( ()->
         Logger test
         ==================================================================== '''
     module('LOGGER: setup')
-    test('logger setup', ()->
+    test('LOGGER setup', ()->
         #Just make sure we set everything up - the setup() tests will
         #   show up for this test
         #
         
-        ok(logger != undefined,
+        ok(LOGGER != undefined,
             'Logger object exists')
 
-        logger.options.log_level = 'all'
-        ok(logger != undefined,
+        LOGGER.options.log_level = 'all'
+        ok(LOGGER != undefined,
             'Logger options is "all"')
 
-        ok(logger.history != undefined,
+        ok(LOGGER.history != undefined,
             'Logger history exists')
 
         return @
@@ -54,16 +54,16 @@ $(document).ready( ()->
     test("can_log: log_level='all'", ()->
         '''Make sure can_log returns proper values for log_level='all' '''
         
-        equal( logger.can_log('debug'),
+        equal( LOGGER.can_log('debug'),
             true,
             'debug: can_log returns true')
-        equal( logger.can_log('error'),
+        equal( LOGGER.can_log('error'),
             true,
             'error: can_log returns true')
-        equal( logger.can_log('info'),
+        equal( LOGGER.can_log('info'),
             true,
             'info: can_log returns true')
-        equal( logger.can_log('warn'),
+        equal( LOGGER.can_log('warn'),
             true,
             'warn: can_log returns true')
         return @
@@ -71,18 +71,18 @@ $(document).ready( ()->
     #log_level = 'none' (log nothing)
     test('can_log: log_level=false', ()->
         
-        logger.options.log_level = 'none'
+        LOGGER.options.log_level = 'none'
 
-        equal( logger.can_log('debug'),
+        equal( LOGGER.can_log('debug'),
             false,
             'debug: can_log returns false')
-        equal( logger.can_log('error'),
+        equal( LOGGER.can_log('error'),
             false,
             'error: can_log returns false')
-        equal( logger.can_log('info'),
+        equal( LOGGER.can_log('info'),
             false,
             'info: can_log returns false')
-        equal( logger.can_log('warn'),
+        equal( LOGGER.can_log('warn'),
             false,
             'warn: can_log returns false')
         return @
@@ -92,11 +92,11 @@ $(document).ready( ()->
     test('can_log: log_level=warn', ()->
         #Should only show warn messages
         
-        logger.options.log_level = 'warn'
-        equal( logger.can_log('info'),
+        LOGGER.options.log_level = 'warn'
+        equal( LOGGER.can_log('info'),
             false,
             'info: can_log returns false')
-        equal( logger.can_log('warn'),
+        equal( LOGGER.can_log('warn'),
             true,
             'warn: can_log returns true')
     )
@@ -105,24 +105,24 @@ $(document).ready( ()->
     test("can_log: log_level=['debug', 'error']", ()->
         #Should only show warn messages
         
-        logger.options.log_level = ['debug', 'error']
-        equal( logger.can_log('debug'),
+        LOGGER.options.log_level = ['debug', 'error']
+        equal( LOGGER.can_log('debug'),
             true,
             'info: can_log returns true')
-        equal( logger.can_log('error'),
+        equal( LOGGER.can_log('error'),
             true,
             'error: can_log returns true')
-        equal( logger.can_log('info'),
+        equal( LOGGER.can_log('info'),
             false,
             'info: can_log returns false')
-        equal( logger.can_log('warn'),
+        equal( LOGGER.can_log('warn'),
             false,
             'warn: can_log returns false')
     )
 
     #------------------------------------
     #
-    #logger.log tests
+    #LOGGER.log tests
     #
     #------------------------------------
     module('LOGGER: log()')
@@ -132,48 +132,48 @@ $(document).ready( ()->
         different log methods (log() and info())'''
         
         #Set level to info
-        logger.options.log_level = 'info'
-        equal( logger.can_log('info'),
+        LOGGER.options.log_level = 'info'
+        equal( LOGGER.can_log('info'),
             true,
             'info: can_log returns false')
          
         #Clear history
-        logger.history = {}
+        LOGGER.history = {}
 
         #Info object we'll log
         meta_info = { 'answer': 42 }
 
-        #Log a message (use log or logger.info)
+        #Log a message (use log or LOGGER.info)
         #   NOTE: These two functions should work exactly the same,
         #   that's why we're calling them like this
         if log_method == 'log'
-            logger.log(
+            LOGGER.log(
                 'info',
                 'some_message',
                 meta_info
             )
         else if log_method == 'info'
-            logger.info(
+            LOGGER.info(
                 'some_message',
                 meta_info
             )
     
         #Now check history
-        ok(logger.history.info,
+        ok(LOGGER.history.info,
             'history:info: key exists')
-        equal(logger.history.info.length,
+        equal(LOGGER.history.info.length,
             1,
             'history:info: key length is 1 after logging')
         #Check info about history, make sure message was saved properly
-        equal(logger.history.info[0][0],
+        equal(LOGGER.history.info[0][0],
             'info',
             'history:info: first item in log is info (the log type)'
         )
-        equal(logger.history.info[0][1],
+        equal(LOGGER.history.info[0][1],
             'some_message',
             'history:info: second item in log is message ("some_message")'
         )
-        equal(logger.history.info[0][2],
+        equal(LOGGER.history.info[0][2],
             meta_info,
             'history:info: third item in log is our passed in object (meta_info)'
         )
